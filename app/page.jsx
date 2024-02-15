@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
 
 const colors = [
   {
@@ -160,6 +161,11 @@ const colors = [
 export default function Home() {
   const [colorList, setColorList] = useState([]);
 
+  const [userTypedColor, setUserTypedColor] = useState({
+    color: "#F6F6F6",
+    textValue: "#F6F6F6",
+  });
+
   const handleGenerate = () => {
     const tempArr = [];
     for (let index = 0; index < colors.length; index++) {
@@ -178,12 +184,53 @@ export default function Home() {
     setColorList(tempArr);
   };
 
+  const handleInputChange = (event) => {
+    const typeValue = event.target.value;
+
+    setUserTypedColor({ ...userTypedColor, textValue: typeValue });
+  };
+
   return (
     <main>
       <div className="container">
-        <p>Home page</p>
+        <p className="mb-4">Home page</p>
 
-        <button onClick={handleGenerate}>Generate</button>
+        {/* <button onClick={handleGenerate}>Generate</button> */}
+
+        <div className="">
+          <div className="flex justify-between rounded-sm gap-4 p-1 mb-2">
+            <div className="flex justify-between items-center gap-1 rounded-md bg-white px-1">
+              <div
+                className="rounded-sm w-5 h-5"
+                style={{ backgroundColor: userTypedColor.textValue }}
+              >
+                <input
+                  type="color"
+                  value={userTypedColor.textValue}
+                  onChange={handleInputChange}
+                  className="opacity-0 block border-0"
+                />
+              </div>
+              <Input
+                type="text"
+                className="h-8 my-1"
+                placeholder="#000000"
+                value={userTypedColor.textValue}
+                onChange={handleInputChange}
+                maxLength="7"
+              />
+            </div>
+          </div>
+
+          <div
+            className="w-28 h-28 rounded border flex justify-center items-center"
+            style={{ backgroundColor: userTypedColor.textValue }}
+          >
+            <small className="text-sm font-medium leading-none">
+              Color Preview
+            </small>
+          </div>
+        </div>
 
         <div className="grid grid-cols-3 gap-12 my-6">
           {colorList.map((col, index) => {
@@ -202,16 +249,10 @@ const ColorLine = (props) => {
   const handleCopy = (hexCode) => {
     if (!navigator.clipboard) return;
 
-    toast({
-      title: "Copied ...!!!",
-    });
-
     navigator.clipboard
       .writeText(hexCode)
       .then(() => {
-        toast({
-          description: "Copied ...!!!",
-        });
+        toast({ description: "Copied ...!!!" });
       })
       .catch((err) => {
         toast({
@@ -227,11 +268,11 @@ const ColorLine = (props) => {
         return (
           <div
             key={`color-block-${element}-line-${index}`}
-            className={`group flex items-end h-12 bg-[${element}]`}
+            className={`group flex items-end h-12 ease-in bg-[${element}]`}
             style={{ backgroundColor: element }}
           >
             <div
-              className="opacity-0 p-1 px-2 rounded-tr-sm bg-slate-300/40 group-hover:opacity-100 cursor-pointer"
+              className="opacity-0 p-1 px-2 rounded-tr-sm ease-in duration-100 bg-slate-300/40 group-hover:opacity-70 hover:opacity-100 cursor-pointer"
               onClick={() => handleCopy(element)}
             >
               <code className={`text-sm font-medium`}>{element}</code>
