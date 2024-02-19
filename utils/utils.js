@@ -41,3 +41,60 @@ export const rgbObjToRgbString = (rgbObj) => {
 
   return tempStr;
 };
+
+/**
+ *
+ * @param {String} hexColor
+ * @returns
+ */
+export const hexToHslObj = (hexColor) => {
+  if (!isValidHexColor(hexColor)) return { h: 0, s: 0, l: 0 };
+
+  // Ensure hexColor starts with #
+  hexColor = hexColor.startsWith("#") ? hexColor : "#" + hexColor;
+
+  // Remove the # and convert to RGB
+  const rgbColor = hexToRgbObj(hexColor);
+
+  // Normalize RGB values
+  const r = rgbColor.r / 255;
+  const g = rgbColor.g / 255;
+  const b = rgbColor.b / 255;
+
+  // Find the minimum and maximum values of RGB
+  const cmin = Math.min(r, g, b);
+  const cmax = Math.max(r, g, b);
+  const delta = cmax - cmin;
+
+  // Calculate the hue
+  let hue = 0;
+  if (delta === 0) {
+    hue = 0;
+  } else if (cmax === r) {
+    hue = ((g - b) / delta) % 6;
+  } else if (cmax === g) {
+    hue = (b - r) / delta + 2;
+  } else {
+    hue = (r - g) / delta + 4;
+  }
+
+  hue = Math.round(hue * 60);
+
+  // Ensure hue is non-negative
+  if (hue < 0) {
+    hue += 360;
+  }
+
+  // Calculate lightness
+  const lightness = (cmax + cmin) / 2;
+
+  // Calculate saturation
+  const saturation =
+    delta === 0 ? 0 : delta / (1 - Math.abs(2 * lightness - 1));
+
+  return {
+    h: Math.round(hue) ?? 0,
+    s: Math.round(saturation * 100) ?? 0,
+    l: Math.round(lightness * 100) ?? 0,
+  };
+};
