@@ -5,7 +5,8 @@ import { useState } from "react";
 // shadcn
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { hexToRgbObj, rgbObjToRgbString } from "@/utils/utils";
+// utils
+import { hexToHslObj, hexToRgbObj, rgbObjToRgbString } from "@/utils/utils";
 
 // ----------------------------------------------
 
@@ -55,10 +56,12 @@ const ColorComoponent = (props) => {
     const typeValue = event.target.value;
     const tempList = userColorList;
 
-    tempList[index].textValue = typeValue.toUpperCase();
+    tempList[index].textValue = typeValue.toUpperCase() ?? "#";
 
     setUserColorList([...tempList]);
   };
+
+  console.log(hexToHslObj(color.textValue));
 
   return (
     <div className="flex rounded-md border gap-4 p-1 mb-2">
@@ -99,6 +102,19 @@ const ColorComoponent = (props) => {
             <p>RGB: </p>
             <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
               {rgbObjToRgbString(hexToRgbObj(color.textValue)) ?? "- - -"}
+            </code>
+          </div>
+
+          <div className="flex gap-2">
+            <p>HSL: </p>
+            <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold">
+              {`hsl(${
+                hexToHslObj(color.textValue).h +
+                "," +
+                hexToHslObj(color.textValue).s +
+                "," +
+                hexToHslObj(color.textValue).l
+              })` ?? "- - -"}
             </code>
           </div>
         </div>
